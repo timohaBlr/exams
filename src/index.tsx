@@ -4,7 +4,7 @@ type StudentType = {
 }
 
 type FriendsType = {
-    [key: string]: Array<string>
+    [key: string]: Array<String>
 }
 
 export const students: Array<StudentType> = [
@@ -20,8 +20,10 @@ export const friends: FriendsType = {
     3: ["William", "Michael", "Lewis",],
     4: ["Oscar", "James", "William",],
 }
-console.log(friends[students[1].id][2])
+console.log(friends[students[0].id][3])
 //Дан список студентов и структура,
 //которая содержит список друзей каждого из студентов.
 //Id студента является ключом к массиву его друзей.
-//Какое значение лежит тут: friends[students[1].id][2]?
+//Какое значение лежит тут: friends[students[0].id][3]?
+
+
