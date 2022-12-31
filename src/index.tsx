@@ -1,19 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+type Student = {
+    id: number
+    name: string
+}
+type Students = Array<Student>
+type Friends = {
+    [key: string]: Array<string>
+}
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+export const students: Students = [
+    {id: 1, name: "Bob"},
+    {id: 2, name: "Alex"},
+    {id: 3, name: "Ann"},
+    {id: 4, name: "Charley"},
+]
+
+export const friends: Friends = {
+    1: ["Oliver", "Jack", "Oscar",],
+    2: ["Jack", "Lewis", "Thomas",],
+    3: ["William", "Michael", "Lewis",],
+    4: ["Oscar", "James", "William",],
+}
+console.log(Array.isArray(friends))
+//Дан список студентов и структура,
+//которая содержит список друзей каждого из студентов.
+//Id студента является ключом к массиву его друзей.
+//Что вернёт выражение: Array.isArray(friends)?
