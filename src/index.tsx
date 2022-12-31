@@ -1,9 +1,8 @@
-
-type Student = {
+type StudentType = {
     id: number
     name: string
 }
-type Students = Array<Student>
+type Students = Array<StudentType>
 type Friends = {
     [key: string]: Array<string>
 }
@@ -21,8 +20,9 @@ export const friends: Friends = {
     3: ["William", "Michael", "Lewis",],
     4: ["Oscar", "James", "William",],
 }
-console.log(Array.isArray(friends))
+console.log(Array.isArray(students))
+
 //Дан список студентов и структура,
-//которая содержит список друзей каждого из студентов.
+//которая содержит список друзей каждого из студентов
 //Id студента является ключом к массиву его друзей.
-//Что вернёт выражение: Array.isArray(friends)?
+//Что вернёт выражение Array.isArray(students)?
