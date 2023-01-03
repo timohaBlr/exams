@@ -4,7 +4,7 @@ type ActionType = {
     payload: number
 }
 
-export const calculator = (state: number, action: ActionType) => {
+export const calculator = (state: number, action: ActionType): number => {
     switch (action.type) {
         case "SUM":
             return state + action.payload
@@ -17,4 +17,4 @@ export const calculator = (state: number, action: ActionType) => {
     }
 }
 
-//Что надо написать вместо ХХХ, чтобы функция calculator работала?
+//Обработка какого action.type не предусмотрена в функции calculator?
