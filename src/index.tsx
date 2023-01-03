@@ -12,11 +12,17 @@ export const calculator = (state: number, action: ActionType): number => {
             return state - action.payload
         case "DIV":
             return state / action.payload
+        case "MULT":
+            return state * action.payload
         case "EXP":
             return state ** action.payload
         default:
             return state
     }
 }
-console.log(calculator(10, {type: "MULT", payload: 2}))
-//Что вернёт такой вызов функции: calculator(10, {type: "MULT", payload: 2})?
+const result = calculator(10, {type: "EXP", payload: 0})
+if (!(result - 1)){
+    console.log("IT-INCUBATOR")
+}
+
+//Что надо написать вместо XXX чтобы в консоли появилась строка "IT-INCUBATOR"?
