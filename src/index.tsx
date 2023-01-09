@@ -1,30 +1,25 @@
-type UserType = {
-    id: number
-    userName: string
-    email: string
-    password: string
+type Status = 'Stopped' | 'Playing' | 'Paused'
+type StateType = {
+    volume: number // in percents
+    trackUrl: string // 'https://blabla.com/track01.mp3',
+    currentPlayPosition: number // milliseconds,
+    status: Status
 }
 
-type ChangeUserPasswordTypeAT = {
-    type: "CHANGE-USER-PASSWORD"
-    payload: {
-        id: number
-        newPassword: string
+export const playerReducer = (state: StateType, action: any) => {
+    switch (action.type) {
+        case 'TRACK-URL-CHANGED':
+            return {
+                ...state,
+                trackUrl: action.url
+            }
+        default:
+            return state
     }
 }
 
-export const userReducer =
-    (state: UserType[], action: ChangeUserPasswordTypeAT): UserType[] => {
-        switch (action.type) {
-            case "CHANGE-USER-PASSWORD":
-                return state.map(u =>
-                    u.id === action.payload.id
-                        ? {...u, password: action.payload.newPassword}
-                        : u)
-            default:
-                return state
-        }
-    }
+const muteTrackAC = () => ({type: 'TRACK-MUTED'})
+const changeTrackAC = (url: string) => ({type: 'TRACK-URL-CHANGED', url})
+const changeTrackPlayStatusAC = (status: Status) => ({type: 'TRACK-STATUS-CHANGED', status})
 
-//Какой код должен быть написан вместо XXX и YYY в типе //ChangeUserPasswordTypeAT, что бы редьюсер работал?
-//В ответе напишите через пробел: XXX  YYY
+//Какой тип должен быть вместо XXX?
