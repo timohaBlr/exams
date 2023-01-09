@@ -1,13 +1,13 @@
 export const reducer = (state: any, action: any) => {
     switch (action.type) {
-        case 'TRACK-ADDED':
-            return [...state, {id: action.trackId, likesCount: 0}]
+        case 'TRACK-DELETED':
+            return state.filter((track: any) => track.id !== action.trackId)
         default:
             return state
     }
 }
 
-const addTrackAC = (trackId: number) => ({type: 'TRACK-ADDED', trackId})
+const deleteTrackAC = (trackId: number) => ({type: 'TRACK-DELETED', trackId})
 
 
 const state = [
@@ -15,8 +15,9 @@ const state = [
     {id: 14, likesCount: 2},
     {id: 100, likesCount: 0}
 ]
-const newState = reducer(state, addTrackAC(300))
+const newState = reducer(state, deleteTrackAC(14))
 
-console.log(newState[3].likesCount === 0)
+console.log(newState.length === 2)
 
-// Что нужно написать вместо XXX, чтобы трек корректно добавился и в консоли увидеть true?
+
+// Что нужно написать вместо XXX, чтобы корректно удалить трек и в консоли увидеть true?
