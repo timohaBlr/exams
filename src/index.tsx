@@ -1,75 +1,42 @@
-import {createStore} from 'redux'
+import React, {useCallback, useState} from 'react'
 import ReactDOM from 'react-dom'
-import {Provider, useSelector, useDispatch} from 'react-redux'
-import React from 'react'
 
-const students = {
-    students: [
-        {id: 1, name: 'Bob'},
-        {id: 2, name: 'Alex'},
-        {id: 3, name: 'Donald'},
-        {id: 4, name: 'Ann'},
-    ]
-}
-type RemoveStudentAT = {
-    type: "REMOVE-STUDENT"
-    id: number
-}
-const RemoveStudentAC = (id: number): RemoveStudentAT => ({
-    type: "REMOVE-STUDENT",
-    id
-})
+export const TempManager = () => {
+    const [temp, setTemp] = useState(0)
+    const [seconds, setSeconds] = useState(0)
 
-const studentsReducer = (state = students, action: RemoveStudentAT) => {
-    switch (action.type) {
-        case "REMOVE-STUDENT":
-            return {
-                ...state,
-                students: state.students.filter(s => s.id !== action.id)
-            }
-    }
-    return state
-}
+    const resetTemp = useCallback(() => setTemp(0), [setTemp])
+    const increaseSeconds = useCallback(() => setSeconds(seconds + 100), [setSeconds, seconds])
 
-const store = createStore(studentsReducer)
-type RootStateType = ReturnType<typeof studentsReducer>
-
-
-const StudentList = () => {
-    const listItemStyles = {
-        width: "100px",
-        borderBottom: "1px solid gray",
-        cursor: "pointer",
-    }
-    const students = useSelector((state: RootStateType) => state.students)
-    const dispatch = useDispatch()
-    const studentsList = students.map(s => {
-        const removeStudent = () => {
-            XXX(YYY( ZZZ))
-        }
-        return (
-            <li key={s.id}
-                style={listItemStyles}
-                onClick={removeStudent}>
-                {s.name}
-            </li>)
-    })
     return (
-        <ol>
-            {studentsList}
-        </ol>
-
+        <>
+            <TempDisplay temp={temp} reset={resetTemp}/>
+            <div>
+                <p><b>Секунды:</b> {seconds} с</p>
+                <button onClick={increaseSeconds}>
+                    Увеличить время на 100 секунд
+                </button>
+            </div>
+        </>
     )
 }
 
+const TempDisplay = React.memo((props: any) => {
+    console.log('Render TempDisplay')
+    return (
+        <div>
+            <p><b>Температура</b>: {props.temp} &#176;</p>
+            <button onClick={props.reset}>Reset</button>
+        </div>
+    )
+})
 
-ReactDOM.render(<div>
-        <Provider store={store}>
-            <StudentList/>
-        </Provider>
-    </div>,
-    document.getElementById('root')
-)
+ReactDOM.render(<TempManager/>, document.getElementById('root'))
 
-// Что нужно написать вместо XXX, YYY и ZZZ, чтобы при клике по имени студент
-// удалялся из списка? Напишите через пробел.
+
+//При увеличении времени (при клике на button) компонент TempDisplay
+//тоже перерисовывается. Эта перерисовка является избыточной.
+//Найдите в чем причина лишних перерисовок.
+//Исправленную версию строки напишите в качестве ответа.
+
+//Пример ответа: const increaseSeconds = () => setSeconds(seconds + 100)
