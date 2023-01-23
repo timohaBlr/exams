@@ -1,44 +1,59 @@
-import React, {useCallback, useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import ReactDOM from 'react-dom'
 
-export const App = () => {
-    const [temp, setTemp] = useState(10)
-    const [seconds, setSeconds] = useState(100)
+type ButtonType = {
+    id: number
+    title: string
+    forAdminOnly: boolean
+}
+const buttons: ButtonType[] = [
+    {id: 1, title: 'delete', forAdminOnly: true},
+    {id: 2, title: 'update', forAdminOnly: true},
+    {id: 3, title: 'create', forAdminOnly: false},
+]
+
+export const App = ({isAdmin}: { isAdmin: boolean }) => {
+
+    const [seconds, setSeconds] = useState(0)
 
     const increaseSeconds = () => setSeconds(seconds + 10)
-    const increaseTemp = useCallback( ()=> setTemp(temp + 1), [temp])
 
+    const correctButtons = useMemo(() => {
+        return buttons.filter(b => isAdmin ? true : !b.forAdminOnly)
+    }, [buttons, isAdmin])
 
     return <>
-        <TempDisplay temp={temp} increaseTemp={increaseTemp}/>
-
+        <ButtonsPanel buttons={correctButtons}/>
         <div>
-            <b>Секунды :</b> {seconds} с
-            <button style={{marginLeft: '15px'}}
-                    onClick={increaseSeconds}>
+            <p>
+                <b>Секунды: {seconds}</b>
+            </p>
+            <button onClick={increaseSeconds}>
                 Увеличить на 10 секунд
             </button>
         </div>
     </>
 }
-const TempDisplay = React.memo((props: any) => {
-    console.log('Render TempDisplay')
+
+const ButtonsPanel = React.memo((props: { buttons: Array<ButtonType> }) => {
+    console.log('Render ButtonsPanel')
     return (
-        <div style={{marginBottom: '15px'}}
-             onClick={props.reset}>
-            <b>Температура:</b> {props.temp} &#176;
-            <button style={{marginLeft: '15px'}}
-                    onClick={props.increaseTemp}>
-                Увеличить температуру на 1 градус
-            </button>
+        <div style={{marginBottom: '15px'}}>
+            <div style={{marginBottom: '15px'}}>
+                <b>Панель с кнопками</b>
+            </div>
+            <div>
+                {props.buttons.map(b => <button key={b.id}>{b.title}</button>)}
+            </div>
         </div>
     )
 })
 
-ReactDOM.render(<App/>, document.getElementById('root'));
+ReactDOM.render(<App isAdmin={true}/>, document.getElementById('root'))
 
-// Что надо написать вместо XXX для того, чтобы обязательно выполнялись 2 условия:
-// 1) При нажатии на кнопку "Увеличить температуру на 1 градус" температура увеличивалась
-// 2) Компонент TempDisplay не должен перерисовываться при нажатии на кнопку "Увеличить на 10 секунд"
+// Что нужно написать вместо XXX и YYY,
+// чтобы избавиться от лишнего перерендера компонента ButtonsPanel
+// при нажатии на кнопку "Увеличить на 10 секунд" ?
 
-// Пример ответа: useEffect(() => setCounter(count + 1), [count])
+// Ответ дайте через пробел: 111 222
+
