@@ -1,23 +1,48 @@
-export const reducer = (state: any, action: any) => {
-    switch (action.type) {
-        case 'TRACK-DELETED':
-            return state.filter((track: any) => track.id !==action.trackId)
-        default:
-            return state
-    }
+import React, { useCallback, useState } from 'react'
+import ReactDOM from 'react-dom'
+
+export const App = () => {
+    const [temp, setTemp] = useState(100)
+    const [seconds, setSeconds] = useState(0)
+
+    const resetTemp = useCallback(() => setTemp(0), [])
+
+    const incSec = useCallback(() => setSeconds(seconds + 1), [seconds])
+
+    return <>
+        <TempDisplay temp={temp} resetTemp={resetTemp}/>
+        <SecDisplay seconds={seconds} incSec={incSec}/>
+    </>
 }
+const TempDisplay = React.memo((props: any) => {
+    console.log('Render TempDisplay')
+    return (
+        <div style={{marginBottom: '10px'}} onClick={props.reset}>
+            <p>
+                <b>Температура: </b>{props.temp} &#176;
+            </p>
+            <button onClick={props.resetTemp}>Сбросить температуру к 0</button>
+        </div>
+    )
+})
 
-const deleteTrackAC = (trackId: number) => ({type: 'TRACK-DELETED', trackId})
+const SecDisplay = React.memo((props: any) => {
+    console.log('Render SecDisplay')
+    return (
+        <div>
+            <p><b>Секунды:</b> {props.seconds} c </p>
+            <button style={{marginRight: '20px'}}
+                    onClick={props.incSec}>
+                Увеличить время на 1 секунду
+            </button>
+        </div>
+    )
+})
 
+ReactDOM.render(<App/>, document.getElementById('root'))
 
-const state = [
-    {id: 12, likesCount: 10},
-    {id: 14, likesCount: 2},
-    {id: 100, likesCount: 0}
-]
-const newState = reducer(state, deleteTrackAC(14))
+// Почему не корректно работает счетчик времени при нажатии на кнопку (срабатывает только 1 раз) ?
+// Найдите в чем причина.
+// Исправленную версию строки напишите в качестве ответа
 
-console.log(newState.length === 2)
-
-
-// Что нужно написать вместо XXX, чтобы корректно удалить трек и в консоли увидеть true?
+// Пример ответа: const incSec = () => setSeconds(seconds + 1)
