@@ -1,30 +1,34 @@
-export const reducer = (state: any, action: any) => {
+type Status = 'Stopped' | 'Playing' | 'Paused'
+type StateType = {
+    volume: number // in percents
+    trackUrl: string // 'https://blabla.com/track01.mp3',
+    currentPlayPosition: number // milliseconds,
+    status: Status
+}
+export const playerReducer = (state: StateType, action: any) => {
     switch (action.type) {
-        case 'USER-NAME-UPDATED':
-            return {...state, user: {...state.user, name: action.name} }
-
+        case 'TRACK-VOLUME-CHANGED':
+            return {
+                ...state,
+                volume: action.volumeLevel
+            }
         default:
             return state
     }
 }
 
-const updateUserNameAC = (name: string) => ({type: 'USER-NAME-UPDATED', name})
+const muteTrackAC = () => ({type: 'TRACK-MUTED'})
+const changeVolumeAC = (volumeLevel: number) => ({type: 'TRACK-VOLUME-CHANGED', volumeLevel})
+const changeTrackAC = (url: string) => ({type: 'TRACK-URL-CHANGED', url})
+const changeTrackPlayStatusAC = (status: Status) => ({type: 'TRACK-STATUS-CHANGED', status})
 
-
-const state = {
-    count: 10,
-    user: {
-        name: 'Dimych',
-        age: 18,
-        isMarried: true,
-        status: "offline"
-    },
-    books: ['you don\'t know JS']
+const state: StateType = {
+    status: 'Stopped',
+    currentPlayPosition: 1213,
+    trackUrl: 'https://blabla.com/track01.mp3',
+    volume: 100
 }
-const newState = reducer(state, updateUserNameAC('Dmitry'))
+const newState = playerReducer(state, changeVolumeAC(20))
+console.log(newState.volume === 20)
 
-console.log(newState.user.name === 'Dmitry')
-console.log(newState.books === state.books)
-console.log(newState.user !== state.user)
-
-//Что нужно написать вместо XXX, чтобы корректно обновить имя пользователя и в консоли увидеть:  true true true?
+// Напишите вместо XXX правильную строку кода, чтобы изменить громкость трека и увидеть в консоли true.
