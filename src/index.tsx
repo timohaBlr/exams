@@ -3,23 +3,29 @@ import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client';
 
 // Types
-type PostType = {
-    body: string
+type PhotoType = {
+    albumId: string
     id: string
     title: string
-    userId: string
+    url: string
 }
 
+type PayloadType = {
+    title: string
+    url?: string
+}
 
 // Api
 const instance = axios.create({baseURL: 'https://exams-frontend.kimitsu.it-incubator.ru/api/'})
 
-const postsAPI = {
-    getPosts() {
-        return instance.get<PostType[]>('posts')
+const photoId = '637df6dc99fdc52af974a517'
+
+const photosAPI = {
+    getPhoto() {
+        return instance.get<PhotoType>(`photos/${photoId}`)
     },
-    deletePost(id: string) {
-        return axios.delete<{ message: string }>(`posts/${id}`)
+    updatePhoto(payload: PayloadType) {
+        return instance.put<PhotoType>(`photos/${photoId}`, payload)
     }
 }
 
@@ -27,37 +33,40 @@ const postsAPI = {
 // App
 export const App = () => {
 
-    const [posts, setPosts] = useState<PostType[]>([])
+    const [photo, setPhoto] = useState<PhotoType | null>(null)
 
     useEffect(() => {
-        postsAPI.getPosts()
+        photosAPI.getPhoto()
             .then((res) => {
-                setPosts(res.data)
+                setPhoto(res.data)
             })
     }, [])
 
-    const deletePostHandler = (id: string) => {
-        postsAPI.deletePost(id)
+    const updatePhotoHandler = () => {
+        // ❗ title и url указаны в качестве заглушки. Server сам сгенерирует новый title
+        const payload = {
+            title: 'Новый title',
+            // url: 'data:image/png;base64,iVBORw0FAKEADDRESSnwMZAABJRUrkJggg=='
+        }
+        photosAPI.updatePhoto(payload)
             .then((res) => {
-                const newPostsArr = posts.filter(p => p.id !== id)
-                setPosts(newPostsArr)
+                setPhoto(res.data)
             })
     };
 
     return (
         <>
-            <h1>📜 Список постов</h1>
-            {posts.map(p => {
-                return (
-                    <div key={p.id}>
-                        <b>title</b>: {p.title}
-                        <button style={{marginLeft: '15px'}}
-                                onClick={() => deletePostHandler(p.id)}>
-                            x
-                        </button>
-                    </div>
-                )
-            })}
+            <h1>📸 Фото</h1>
+            <div>
+                <div style={{marginBottom: '15px'}}>
+                    <h1>title: {photo?.title}</h1>
+                    <div><img src={photo?.url} alt=""/></div>
+                </div>
+                <button style={{marginLeft: '15px'}}
+                        onClick={updatePhotoHandler}>
+                    Изменить title
+                </button>
+            </div>
         </>
     )
 }
@@ -67,7 +76,10 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(<App/>)
 
 // 📜 Описание:
-// Почему не удаляется post при нажатии на кнопку удаления (х) ?
-// Найдите ошибку и вставьте исправленную строку кода в качестве ответа
+// При нажатии на кнопку "Изменить title" title должен обновиться,
+// но из-за невнимательности была допущена ошибка и изменение не происходит
 //
-// 🖥 Пример ответа: return axios.delete
+// Найдите и исправьте ошибку
+// Исправленную версию строки напишите в качестве ответа.
+
+// 🖥 Пример ответа: photosAPI.updatePhotoTitle(id, title)
