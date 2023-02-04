@@ -2,58 +2,124 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client';
 
-// Types
-type TodoType = {
-    id: string;
-    title: string;
-    order: number;
-    createdAt: string;
-    updatedAt: string;
-    completed: boolean;
+// TYPES
+type ProductType = {
+    id: string
+    title: string
+    description: string
+    price: number
 }
 
+type FilmType = {
+    id: number
+    nameOriginal: string
+    description: string
+    ratingImdb: number
+}
+
+type ProductsResponseType = {
+    total: number
+    messages: string[]
+    page: number
+    pageCount: number
+    data: ProductType[]
+}
+
+type FilmsResponseType = {
+    total: number
+    messages: string[]
+    page: number
+    pageCount: number
+    data: FilmType[]
+}
+
+type CommonResponseType<T> = {
+    total: number
+    messages: string[]
+    page: number
+    pageCount: number
+    data: T[]
+}
 
 // Api
 const instance = axios.create({baseURL: 'https://exams-frontend.kimitsu.it-incubator.ru/api/'})
 
-const todosAPI = {
-    getTodo(todoId: string) {
-        return instance.get<TodoType>(`todos/${todoId}`)
+const api = {
+    getProducts() {
+        return instance.get<CommonResponseType<ProductType>>('products')
+    },
+    getFilms() {
+        return instance.get<CommonResponseType<FilmType>>('films')
     }
 }
 
 
 // App
-export const App = () => {
-
-    const [todo, setTodo] = useState<TodoType | null>(null)
-    const [error, setError] = useState<string>('')
-
-    useEffect(() => {
-        const todoId = "637cb9342f24ad82bcb07d8d"
-        todosAPI.getTodo(todoId)
-            .then((res: any) => setTodo(res.data))
-            .catch(e => {
-                setError('Ошибка 😰. Анализируй network 😉')
-            })
-    }, [])
-
-
+const App = () => {
     return (
         <>
-            <h2>✅ Тудулист</h2>
-            {
-                !!todo
-                    ? <div>
-                        <div style={todo?.completed ? {color: 'grey'} : {}} key={todo?.id}>
-                            <input type="checkbox" checked={todo?.completed}/>
-                            <b>Описание</b>: {todo?.title}
-                        </div>
-                        <h2>Так держать. Ты справился 🚀</h2>
-                    </div>
-                    : <h2 style={{ color: 'red' }}>{error}</h2>
-            }
+            <h1>🛒 Products && 🎦 Films</h1>
+            <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+                <Products/>
+                <Films/>
+            </div>
         </>
+    )
+}
+
+const Products = () => {
+
+    const [products, setProducts] = useState<ProductType[]>([])
+
+    useEffect(() => {
+        api.getProducts()
+            .then((res) => setProducts(res.data.data))
+    }, [])
+
+    return (
+        <div style={{width: '45%'}}>
+            <h2>🛒 Products</h2>
+            <div>
+                {
+                    products.map(p => {
+                        return (
+                            <div key={p.id}>
+                                <b>{p.title}</b>
+                                <p>{p.description}</p>
+                                <p>💵 {p.price} $</p>
+                            </div>
+                        )
+                    })
+                }</div>
+        </div>
+    )
+}
+
+const Films = () => {
+
+    const [films, setFilms] = useState<FilmType[]>([])
+
+    useEffect(() => {
+        api.getFilms()
+            .then((res) => setFilms(res.data.data))
+    }, [])
+
+    return (
+        <div style={{width: '45%'}}>
+            <h2>🎦 Films</h2>
+            <div>
+                {
+                    films.map(f => {
+                        return (
+                            <div key={f.id}>
+                                <b>{f.nameOriginal}</b>
+                                <p>{f.description}</p>
+                                <p>⭐ {f.ratingImdb} </p>
+                            </div>
+                        )
+                    })
+                }</div>
+        </div>
     )
 }
 
@@ -62,8 +128,20 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(<App/>)
 
 // 📜 Описание:
-// Студент по неопытности допустил одну маленькую ошибку, но из-за нее он не может вывести на экран тудулист.
-// Найдите ошибку и вставьте исправленную версию строки кода в качестве ответа
-// P.S. Эта ошибка из реальной жизни, студенты часто ошибаются подобным образом и не могут понять в чем дело.
-
-// 🖥 Пример ответа:  .then((res: any) => setTodo(res.data.data))
+// При запуске проекта на экране вы увидите 2 списка: Products и Films.
+// С ними все хорошо, но обратите внимание на типизацию ответов с сервера ProductsResponseType и FilmsResponseType.
+// Дублирование типов на лицо.
+// Ваша задача написать дженериковый тип CommonResponseType и заменить им дублирующие типы.
+// Очередность свойств в типах менять запрещено (по причине что нам будет тяжело перебрать все правильные варианты :) )
+// Параметр тип назовите буквой T
+//
+// В качестве ответа нужно скопировать полностью рабочий дженериковый тип CommonResponseType
+//
+// 🖥 Пример ответа:
+// type CommonResponseType = {
+//   total: T
+//   messages: T[]
+//   page: T
+//   pageCount: T
+//   data: T[]
+// }
