@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom/client';
 
 // Types
 type PostType = {
-    id: string
     body: string
+    id: string
     title: string
     userId: string
 }
@@ -16,10 +16,11 @@ const instance = axios.create({baseURL: 'https://exams-frontend.kimitsu.it-incub
 
 const postsAPI = {
     getPosts() {
-        // Promise.resolve() стоит в качестве заглушки, чтобы TS не ругался и код компилировался
-        // Promise.resolve() нужно удалить и написать правильный запрос для получения постов
-        return instance.get('/posts')
+        return instance.get<PostType[]>('posts')
     },
+    deletePost(id: string) {
+        return axios.delete<{ message: string }>(`posts/${id}`)
+    }
 }
 
 
@@ -30,22 +31,33 @@ export const App = () => {
 
     useEffect(() => {
         postsAPI.getPosts()
-            .then((res: any) => {
+            .then((res) => {
                 setPosts(res.data)
             })
     }, [])
 
+    const deletePostHandler = (id: string) => {
+        postsAPI.deletePost(id)
+            .then((res) => {
+                const newPostsArr = posts.filter(p => p.id !== id)
+                setPosts(newPostsArr)
+            })
+    };
 
     return (
         <>
             <h1>📜 Список постов</h1>
-            {
-                posts.length
-                    ? posts.map(p => {
-                        return <div key={p.id}><b>title</b>: {p.title}</div>
-                    })
-                    : <h2>Постов нету 😥</h2>
-            }
+            {posts.map(p => {
+                return (
+                    <div key={p.id}>
+                        <b>title</b>: {p.title}
+                        <button style={{marginLeft: '15px'}}
+                                onClick={() => deletePostHandler(p.id)}>
+                            x
+                        </button>
+                    </div>
+                )
+            })}
         </>
     )
 }
@@ -55,8 +67,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(<App/>)
 
 // 📜 Описание:
-// Напишите запрос на сервер для получения всех постов
-// Типизацию возвращаемых данных в ответе указывать необязательно, но можно и указать (в ответах учтены оба варианта).
-// Исправленную версию строки напишите в качестве ответа.
-
-// 🖥 Пример ответа: return Promise.resolve()
+// Почему не удаляется post при нажатии на кнопку удаления (х) ?
+// Найдите ошибку и вставьте исправленную строку кода в качестве ответа
+//
+// 🖥 Пример ответа: return axios.delete
