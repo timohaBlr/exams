@@ -1,75 +1,62 @@
-import {createStore} from 'redux'
-import ReactDOM from 'react-dom'
-import {Provider, useSelector, useDispatch} from 'react-redux'
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import ReactDOM from 'react-dom/client';
 
-const students = {
-    students: [
-        {id: 1, name: 'Bob'},
-        {id: 2, name: 'Alex'},
-        {id: 3, name: 'Donald'},
-        {id: 4, name: 'Ann'},
-    ]
-}
-type RemoveStudentAT = {
-    type: "REMOVE-STUDENT"
-    id: number
-}
-const RemoveStudentAC = (id: number): RemoveStudentAT => ({
-    type: "REMOVE-STUDENT",
-    id
-})
-
-const studentsReducer = (state = students, action: RemoveStudentAT) => {
-    switch (action.type) {
-        case "REMOVE-STUDENT":
-            return {
-                ...state,
-                students: state.students.filter(s => s.id !== action.id)
-            }
-    }
-    return state
+// Types
+type PostType = {
+    id: string
+    body: string
+    title: string
+    userId: string
 }
 
-const store = createStore(studentsReducer)
-type RootStateType = ReturnType<typeof studentsReducer>
+
+// Api
+const instance = axios.create({baseURL: 'https://exams-frontend.kimitsu.it-incubator.ru/api/'})
+
+const postsAPI = {
+    getPosts() {
+        // Promise.resolve() стоит в качестве заглушки, чтобы TS не ругался и код компилировался
+        // Promise.resolve() нужно удалить и написать правильный запрос для получения постов
+        return instance.get('/posts')
+    },
+}
 
 
-const StudentList = () => {
-    const listItemStyles = {
-        width: "100px",
-        borderBottom: "1px solid gray",
-        cursor: "pointer",
-    }
-    const students = useSelector((state: RootStateType) => state.students)
-    const dispatch = useDispatch()
-    const studentsList = students.map(s => {
-        const removeStudent = () => {
-            dispatch(RemoveStudentAC( s.id))
-        }
-        return (
-            <li key={s.id}
-                style={listItemStyles}
-                onClick={removeStudent}>
-                {s.name}
-            </li>)
-    })
+// App
+export const App = () => {
+
+    const [posts, setPosts] = useState<PostType[]>([])
+
+    useEffect(() => {
+        postsAPI.getPosts()
+            .then((res: any) => {
+                setPosts(res.data)
+            })
+    }, [])
+
+
     return (
-        <ol>
-            {studentsList}
-        </ol>
-
+        <>
+            <h1>📜 Список постов</h1>
+            {
+                posts.length
+                    ? posts.map(p => {
+                        return <div key={p.id}><b>title</b>: {p.title}</div>
+                    })
+                    : <h2>Постов нету 😥</h2>
+            }
+        </>
     )
 }
 
 
-ReactDOM.render(<div>
-        <Provider store={store}>
-            <StudentList/>
-        </Provider>
-    </div>,
-    document.getElementById('root')
-)
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(<App/>)
 
-// Что нужно написать вместо XXX, YYY и ZZZ, чтобы при клике по имени студент
-// удалялся из списка? Напишите через пробел.
+// 📜 Описание:
+// Напишите запрос на сервер для получения всех постов
+// Типизацию возвращаемых данных в ответе указывать необязательно, но можно и указать (в ответах учтены оба варианта).
+// Исправленную версию строки напишите в качестве ответа.
+
+// 🖥 Пример ответа: return Promise.resolve()
