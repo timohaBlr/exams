@@ -1,72 +1,68 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client'
 
-// Types
-type PhotoType = {
-    albumId: string
-    id: string
-    title: string
-    url: string
+type UserType = {
+    id: string;
+    name: string;
+    age: number;
 }
 
-type PayloadType = {
-    title: string
-    url?: string
-}
-
-// Api
+// API
 const instance = axios.create({baseURL: 'https://exams-frontend.kimitsu.it-incubator.ru/api/'})
 
-const photoId = '637df6dc99fdc52af974a517'
-
-const photosAPI = {
-    getPhoto() {
-        return instance.get<PhotoType>(`photos/${photoId}`)
+const api = {
+    getUsers(pageNumber: number) {
+        return instance.get(`users?pageSize=${3}&pageNumber=${pageNumber}`)
     },
-    updatePhoto(payload: PayloadType) {
-        return instance.put<PhotoType>(`photos/${photoId}`, payload)
-    }
 }
 
-
 // App
+const buttons = [
+    {id: 1, title: '1'},
+    {id: 2, title: '2'},
+    {id: 3, title: '3'},
+]
+
 export const App = () => {
 
-    const [photo, setPhoto] = useState<PhotoType | null>(null)
+    const [users, setUsers] = useState<UserType[]>([])
+    const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
-        photosAPI.getPhoto()
-            .then((res) => {
-                setPhoto(res.data)
+        api.getUsers(currentPage)
+            .then((res: any) => {
+                setUsers(res.data.items)
             })
-    }, [])
+    }, [currentPage])
 
-    const updatePhotoHandler = () => {
-        // ❗ title и url указаны в качестве заглушки. Server сам сгенерирует новый title
-        const payload = {
-            title: 'Новый title',
-            // url: 'data:image/png;base64,iVBORw0FAKEADDRESSnwMZAABJRUrkJggg=='
-        }
-        photosAPI.updatePhoto(payload)
-            .then((res) => {
-                setPhoto(res.data)
-            })
+    const setPageHandler = (page: number) => {
+        setCurrentPage(page)
     };
 
     return (
         <>
-            <h1>📸 Фото</h1>
-            <div>
-                <div style={{marginBottom: '15px'}}>
-                    <h1>title: {photo?.title}</h1>
-                    <div><img src={photo?.url} alt=""/></div>
-                </div>
-                <button style={{marginLeft: '15px'}}
-                        onClick={updatePhotoHandler}>
-                    Изменить title
-                </button>
-            </div>
+            <h1>👪 Список пользователей</h1>
+            {
+                users.map(u => {
+                    return <div style={{marginBottom: '25px'}} key={u.id}>
+                        <p><b>name</b>: {u.name}</p>
+                        <p><b>age</b>: {u.age}</p>
+                    </div>
+                })
+            }
+
+            {
+                buttons.map(b => {
+                    return (
+                        <button key={b.id}
+                                style={b.id === currentPage ? {backgroundColor: 'lightblue'} : {}}
+                                onClick={() => setPageHandler(b.id)}>
+                            {b.title}
+                        </button>
+                    )
+                })
+            }
         </>
     )
 }
@@ -76,10 +72,8 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(<App/>)
 
 // 📜 Описание:
-// При нажатии на кнопку "Изменить title" title должен обновиться,
-// но из-за невнимательности была допущена ошибка и изменение не происходит
-//
-// Найдите и исправьте ошибку
-// Исправленную версию строки напишите в качестве ответа.
+// При переходе по страницам должны подгружаться новые пользователи.
+// Однако в коде допущена ошибка и всегда подгружаются одни и теже пользователи.
+// Задача: найти эту ошибку, и исправленную версию строки написать в качестве ответа.
 
-// 🖥 Пример ответа: photosAPI.updatePhotoTitle(id, title)
+// 🖥 Пример ответа: const [currentPage, setCurrentPage] = useState(page)
